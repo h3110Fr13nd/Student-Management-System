@@ -1,4 +1,10 @@
 
+---
+Status : #begin
+Tags : [[GUI with python]]  -  [[python]]  -  [[Student Management System]]  -  [[tkinterDND2]]  -  [[project]]  - [[college]]
+Links :  
+References :
+---
 ### Intro
 
 python Group Project  for college, project.
@@ -25,8 +31,4 @@ Since we have Some DND features too. We make make it DND application
 ![Pasted image 20230226031430.png](<./attachments/Pasted image 20230226031430.png>)
 
 
----
-Status : #begin
-Tags : [[GUI with python]]  -  [[python]]  -  [[Student Management System]]  -  [[tkinterDND2]]  -  [[project]]  - [[college]]
-Links :  
-References :
+
