@@ -11,8 +11,22 @@
             "id": "dd509d378569a447",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "Student Management Project.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "977431fc2e44909b",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "attachments/Pasted image 20230226031430.png"
+              }
             }
           }
         ]
@@ -81,6 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Student Management Project.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +112,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Student Management Project.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +134,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Student Management Project.md"
+              }
             }
           }
         ]
@@ -140,8 +158,8 @@
   },
   "active": "dd509d378569a447",
   "lastOpenFiles": [
-    "Student Management Project.md",
     "attachments/Pasted image 20230226031430.png",
+    "Student Management Project.md",
     "attachments/Pasted image 20230226031302.png"
   ]
 }

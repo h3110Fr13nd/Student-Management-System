@@ -22,7 +22,7 @@ Since we have Some DND features too. We make make it DND application
 ## GUI
 
 - Menu will have the features mentioned earlier in Intro 
-![[Pasted image 20230226031430.png]]
+![Pasted image 20230226031430.png](./attachments/Pasted image 20230226031430.png)
 
 
 ---
