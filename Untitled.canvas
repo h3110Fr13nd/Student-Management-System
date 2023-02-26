@@ -1,9 +1,6 @@
 {
 	"nodes":[
-		{"type":"text","text":"Student Management System","id":"fef66e2ee0fb9f9c","x":-820,"y":-780,"width":430,"height":50},
-		{"type":"file","file":"College/Project/Student Mangement/Student Management Project.md","id":"b39580862ff799bd","x":-1320,"y":-560,"width":670,"height":400}
+		{"type":"text","text":"Student Management System","id":"fef66e2ee0fb9f9c","x":-1140,"y":-780,"width":430,"height":50}
 	],
-	"edges":[
-		{"id":"d7dfb1bfbb18c826","fromNode":"fef66e2ee0fb9f9c","fromSide":"bottom","toNode":"b39580862ff799bd","toSide":"top"}
-	]
+	"edges":[]
 }
