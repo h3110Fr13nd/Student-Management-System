@@ -66,7 +66,7 @@ enroll | branch | sem | div | roll | name | mentor| phone num | email
 #### GUI with Python
 ![GUI with python](<./GUI with python.md>)
 
-[Readme.md](<./Readme.md>)
+[README.md](<./README.md>)
 
 ---
 Status : #begin
