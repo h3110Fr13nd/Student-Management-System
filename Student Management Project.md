@@ -62,15 +62,26 @@ enroll | branch | sem | div | roll | name | mentor| phone num | email
 	- comparison to others
 ### Student Detail page
 
+Forgot to add Gender
 ![Pasted image 20230226151500.png](<./attachments/Pasted image 20230226151500.png>)
 #### GUI with Python
 ![GUI with python](<./GUI with python.md>)
+
+
+
+
+Actually I'm tired. LET'S DO LAZY.
+
+First I make it such that output in terminal kind of thing.
+Then after finishing it. Move on to the GUI part.
+
+
 
 [README.md](<./README.md>)
 
 ---
 Status : #begin
-Tags : [[GUI with python]]  -  [[python]]  -  [[Student Management System]]  -  [[tkinterDND2]]  -  [[project]]  - [[college]]
+Tags : [[GUI with python]]  -  [[python]]  -  [[Student Management System]]  -  [[tkinterDND2]]  -  [[project]]  - [[college]]  
 Links :  
 References :
 

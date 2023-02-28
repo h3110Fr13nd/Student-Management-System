@@ -6,6 +6,7 @@ import pandas as pd
 import json
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
+
 class StudentManagementSystem(TkinterDnD.Tk):
     def __init__(self):
         super().__init__()
@@ -80,21 +81,13 @@ class StudentDetailsFrame(tk.Frame):
                   background=[('active', '#1d4a70')],
                   foreground=[('active', '#d2a8ff')]
                   ) 
-        # style.map("Treeview",
-        #           background=[('selected', 'blue')],
-        #           foreground=[('selected', 'white')]
-        #           )
 
         self.label = tk.Label(self, text='Student Details', font=('arial', 20, 'bold'), bg='#0d1117', fg='white')
         self.label.pack(side=tk.TOP, fill=tk.X)
         
         
         self.student_details = StudentDetails(parent=self)
-        
-
-        
-
-
+ 
 class StudentDetails(ttk.Treeview):
     def __init__(self, parent):
         super().__init__(parent)

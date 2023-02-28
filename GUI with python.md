@@ -86,6 +86,7 @@ style.map("Vertical.TScrollbar",
 
 
 ---
-Tags : [[tkinterDND2]] - [[tkinter]]  -  [[ttk]]  -  [[GUI]]
-Links : [[Student Management Project]]
+Tags : [[tkinterDND2]] - [[tkinter]]  -  [[ttk]]  -  [[GUI]] 
+Links : [[Student Management Project]]  -  [[Student Management System]]
+
 References : 

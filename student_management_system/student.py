@@ -47,7 +47,7 @@ class Student:
     def add_student(self,**kwargs):
         '''add student to the database'''
         Student.students = Student.students.append(self.__dict__, ignore_index=True)
-        Student.students.to_excel('./data/student_data.xlsx', index=False)
+        Student.students.to_excel('./data/student_data.xlsx', index=False, sheet_name='')
         return True
 
     def update_student(self, enrollment):
@@ -91,11 +91,6 @@ class Student:
         student = Student.students[Student.students['mentor'] == mentor]
         return student
     
-    def get_student_by_status(self, status):
-        '''get student data by status'''
-        student = Student.students[Student.students['status'] == status]
-        return student
-    
     def get_student_by_name(self, name):
         '''get student data by name'''
         student = Student.students[Student.students['name'] == name]
@@ -111,4 +106,15 @@ class Student:
         student = Student.students[Student.students['email'] == email]
         return student
     
+    def get_student_by_phone(self, phone):
+        '''get student data by phone'''
+        student = Student.students[Student.students['phone'] == phone]
+        return student
+    
+    
+    
 
+
+
+df = pd.read_csv('student_data.csv')
+df.to_excel('student_data.xlsx', index=False)
