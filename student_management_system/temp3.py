@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+from utils import print_df_from_dict
 
 class Students:
     '''student class'''
@@ -60,7 +61,7 @@ class Students:
     def get_student(cls, enrollment):
         '''get student'''
         if enrollment in cls.students:
-            return cls.students[enrollment]
+            return {enrollment: cls.students[enrollment]}
         else:
             return False
         
@@ -129,7 +130,6 @@ class Students:
         self.admission_date = datetime.datetime.now().strftime("%d-%m-%Y")
         self.attendance = Attendance(self.enrollment)
         self.marks = Marks(self.enrollment)
-
 
 class Attendance:
     '''attendance class'''
@@ -217,7 +217,6 @@ class Attendance:
         '''get attendance by date range, month, year range'''
         return self.attendance[(self.attendance.index >= start_date) & (self.attendance.index <= end_date) & (self.attendance.index.month >= start_month) & (self.attendance.index.month <= end_month) & (self.attendance.index.year >= start_year) & (self.attendance.index.year <= end_year)]
     
-
 class Subject:
     def __init__(self, subject_code, subject_name, subject_credit_theory,subject_credit_practical, taught_in_sem):
         self.subject_code = subject_code
@@ -225,7 +224,6 @@ class Subject:
         self.subject_credit_theory = subject_credit_theory
         self.subject_credit_practical = subject_credit_practical
         self.taught_in_sem = taught_in_sem
-
 
 class Subjects:
     # Fetching data from excel file
@@ -441,16 +439,19 @@ class StudentMangement:
         print("3. Marks Details (Add, Edit, Delete, View)")
         print("4. Attendance Details (Add, Edit, Delete, View)")
         print("5. Exit")
+
         choice = int(input("Enter your choice: "))
-        # print(Students.students.index.tolist())
+        
         if choice == 1:
             print("Student Details")
             print("     1. Add Student")
             print("     2. Edit Student")
             print("     3. Delete Student")
             print("     4. View Student")
-            print("     5. Exit")
+            print("     5. Back")
+
             choice = int(input("Enter your choice: "))
+
             if choice == 1:
                 print("     Add Student")
                 name = input("          Enter name: ")
@@ -472,6 +473,7 @@ class StudentMangement:
                     print("Student added successfully")
                 else:
                     print("Student already exists")
+            
             elif choice == 2:
                 print("     Edit Student")
                 enrollment = int(input("          Enter enrollment: "))
@@ -493,8 +495,10 @@ class StudentMangement:
                     print("          12. Edit Mentor")
                     print("          13. Admission Date")
                     print("          13. Exit")
+
                     edit_choices = list(map(int,input("          Enter Choices in format <<choice1> <choice2> ...> \n          e.g. For sem and division and dob change type: 3 4 7\n          Enter your choices: ").split()))
-                    for edit_choice in edit_choices:
+
+                    for edit_choice in set(edit_choices):
                         if edit_choice==1:
                             name = input("              Enter name: ")
                             if Students.update_student(enrollment, name=name):
@@ -502,11 +506,17 @@ class StudentMangement:
                             else:
                                 print("              Student not found")
                         elif edit_choice==2:
+
                             new_enrollment = input("              Enter new enrollment: ")
-                            if Students.update_student(enrollment, enrollment=new_enrollment):
+                            if new_enrollment not in Students.students:
+                                temp_student = Students.students[enrollment]
+                                Students.students[new_enrollment] = temp_student
+                                del Students.students[enrollment]
+                                Students.update_students()
+                                enrollment = new_enrollment
                                 print("              Enrollment changed successfully")
                             else:
-                                print("              Student not found")
+                                print("              Student already exists With this enrollment")
                         elif edit_choice==3:
                             semester = int(input("              Enter new sem: "))
                             if Students.update_student(enrollment, semester=semester):
@@ -580,13 +590,15 @@ class StudentMangement:
                             break
                 else:
                     print("          Student not found")
+
             elif choice == 3:
                 print("     Delete Student")
-                enrollment = input("          Enter enrollment: ")
+                enrollment = int(input("          Enter enrollment: "))
                 if Students.delete_student(enrollment):
                     print("          Student deleted successfully")
                 else:
                     print("          Student not found")
+
             elif choice == 4:
 
                 print("     View Student(s)")
@@ -605,15 +617,99 @@ class StudentMangement:
                 if view_choice == 1:
                     students = Students.get_all_students()
                     if students:
-                        print("          Enrollment\t\tBranch\t\tSemester\t\tDivision\t\tRoll Number\t\tName\t\tGender\t\tDOB\t\tGuardian Name\t\tPhone\t\tEmail\t\tMentor\t\tAdmission Date")
-                        for student in students:
-                            print("          ", student[0], "\t\t", student[1], "\t\t", student[2], "\t\t", student[3], "\t\t", student[4], "\t\t", student[5], "\t\t", student[6], "\t\t", student[7], "\t\t", student[8], "\t\t", student[9], "\t\t", student[10], "\t\t", student[11], "\t\t", student[12])
-                        
-                        students_df = pd.DataFrame(students)
-                        print(students_df)
+                        print("             Students:")
+                        print(Students.students_df)
                     else:
-                        print("          No students found")
+                        print("             No students found")
+                elif view_choice == 2:
+                    print("             View Student by Enrollment")
+                    enrollment = int(input("             Enter enrollment: "))
+                    student = Students.get_student(enrollment)
+                    if student:
+                        print("             Student:")
+                        print(pd.DataFrame(student))
+                    else:
+                        print("             Student not found")
+                elif view_choice == 3:
+                    name = input("             Enter name: ")
+                    students = Students.get_students_by_name(name)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 4:
+                    branch = input("             Enter branch: ")
+                    students = Students.get_students_by_branch(branch)
+                    if students:
+                        print("              Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 5:
+                    semester = int(input("             Enter semester: "))
+                    students = Students.get_students_by_semester(semester)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 6:
+                    division = input("             Enter division: ")
+                    students = Students.get_students_by_division(division)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 7:
+                    roll_no = int(input("             Enter roll number: "))
+                    students = Students.get_students_by_roll_no(roll_no)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 8:
+                    mentor = input("             Enter mentor: ")
+                    students = Students.get_students_by_mentor(mentor)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 9:
+                    branch = input("             Enter branch: ")
+                    semester = int(input("             Enter semester: "))
+                    students = Students.get_students_by_branch_semester(branch, semester)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                elif view_choice == 10:
+                    branch = input("             Enter branch: ")
+                    semester = int(input("             Enter semester: "))
+                    division = input("             Enter division: ")
+                    students = Students.get_students_by_branch_semester_division(branch, semester, division)
+                    if students:
+                        print("             Students:")
+                        print_df_from_dict(students)
+                    else:
+                        print("             Student not found")
+                else:
+                    print("             Invalid Choice")
 
+            elif choice == 5:
+                print("         Back to Main Menu")
+
+            else:
+                print("         Invalid Choice")
+                print("         Back to Main Menu")
+        
+        elif choice == 2:
+            pass
+            
 if __name__ == '__main__':
     exit_choice = False
     while not exit_choice:
@@ -622,4 +718,5 @@ if __name__ == '__main__':
         choice = input("Enter your choice: ")
         if choice == 'N' or choice == 'n':
             exit_choice = True
+
 
