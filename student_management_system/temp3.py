@@ -218,13 +218,13 @@ class Attendance:
         return self.attendance[(self.attendance.index >= start_date) & (self.attendance.index <= end_date) & (self.attendance.index.month >= start_month) & (self.attendance.index.month <= end_month) & (self.attendance.index.year >= start_year) & (self.attendance.index.year <= end_year)]
     
 class Subject:
-    def __init__(self, subject_code, subject_name, subject_credit_theory,subject_credit_practical, taught_in_sem):
+    def __init__(self, subject_code, subject_name, subject_credit_theory,subject_credit_practical, taught_in_sem, taught_in_branchs):
         self.subject_code = subject_code
         self.subject_name = subject_name
         self.subject_credit_theory = subject_credit_theory
         self.subject_credit_practical = subject_credit_practical
         self.taught_in_sem = taught_in_sem
-
+        self.taught_in_branch = taught_in_branchs
 class Subjects:
     # Fetching data from excel file
     subjects = pd.read_excel('./data/subjects_data.xlsx')
@@ -233,26 +233,31 @@ class Subjects:
     
     @classmethod
     def update_excel(cls):
-        df = pd.DataFrame(cls.subjects)
-        df = df.T
+        # read all attributes of all suubjects and make a dictionary with key as subject_code and all attributes as another dictionary whose key is attribute name and value is attribute value
+        #exclude attribute 'subject_code' from the dictionary
+        subjects = {subject_code: {attribute: getattr(subject, attribute) for attribute in subject.__dict__ if attribute != 'subject_code'} for subject_code, subject in cls.subjects.items()}
+        print(subjects)
+        df = pd.DataFrame(subjects).T
+        df.index.name = 'subject_code'
         df.to_excel('./data/subjects_data.xlsx', index=True)
     
     @classmethod
     def add_subject(cls, subject_code, subject_name, subject_credit_theory, 
-                    subject_credit_practical, taught_in_sem):
+                    subject_credit_practical, taught_in_sem, taught_in_branchs):
         if subject_code not in cls.subjects:
-            cls.subjects[subject_code] = Subject(subject_code, subject_name, subject_credit_theory, subject_credit_practical, taught_in_sem)
+            cls.subjects[subject_code] = Subject(subject_code, subject_name, subject_credit_theory, subject_credit_practical, taught_in_sem, taught_in_branchs)
             cls.update_excel()
             return True
         else:
             return False
     @classmethod
-    def update_subject(cls, subject_code, subject_name, subject_credit_theory, subject_credit_practical, taught_in_sem):
+    def update_subject(cls, subject_code, subject_name, subject_credit_theory, subject_credit_practical, taught_in_sem, taught_in_branchs):
         if subject_code in cls.subjects:
             cls.subjects[subject_code].subject_name = subject_name
             cls.subjects[subject_code].subject_credit_theory = subject_credit_theory
             cls.subjects[subject_code].subject_credit_practical = subject_credit_practical
             cls.subjects[subject_code].taught_in_sem = taught_in_sem
+            cls.subjects[subject_code].taught_in_branch = taught_in_branchs
             cls.update_excel()
             return True
         else:
@@ -288,6 +293,11 @@ class Subjects:
     @classmethod
     def get_subjects_by_sem_range(cls, start_sem, end_sem):
         return {k:v for k,v in cls.subjects.items() if v.taught_in_sem >= start_sem and v.taught_in_sem <= end_sem}
+    
+    @classmethod
+    def get_subjects_by_branch(cls, taught_in_branch):
+        return {k:v for k,v in cls.subjects.items() if v.taught_in_branch in taught_in_branch.split(',')}
+    
 
 class Marks:
     # Fetching data from excel file with subject_code and enrollment as index and there are 4 tests for theory and 1 practical
@@ -496,7 +506,7 @@ class StudentMangement:
                     print("          13. Admission Date")
                     print("          13. Exit")
 
-                    edit_choices = list(map(int,input("          Enter Choices in format <<choice1> <choice2> ...> \n          e.g. For sem and division and dob change type: 3 4 7\n          Enter your choices: ").split()))
+                    edit_choices = list(map(int,input("          Enter Choices in format <<choice1>,<choice2>,...> \n          e.g. For sem and division and dob change type: 3,4,7\n          Enter your choices: ").split(',')))
 
                     for edit_choice in set(edit_choices):
                         if edit_choice==1:
@@ -708,7 +718,202 @@ class StudentMangement:
                 print("         Back to Main Menu")
         
         elif choice == 2:
-            pass
+            print("Subject Details")
+            print("     1. Add Subject")
+            print("     2. Edit Subject")
+            print("     3. Delete Subject")
+            print("     4. View Subject(s)")
+            print("     5. Back to Main Menu")
+            choice = int(input("     Enter your choice: "))
+            if choice == 1:
+                print("     Add Subject")
+                name = input("          Enter subject name: ")
+                code = int(input("          Enter  subject code: "))
+                branchs = input("          (Enter branch names in a comma separated manner with no spaces in between\n\
+          eg. Enter branchs: CE,IT,CSE\
+          Enter branchs: ")
+                semester = int(input("          Enter semester: "))
+                theory_credit = int(input("          Enter theory credit: "))
+                practical_credit = int(input("          Enter practical credit: "))
+
+                if Subjects.add_subject(code, name, theory_credit, practical_credit, semester, branchs):
+                    print("          Subject added successfully")
+                else:
+                    print("          Subject already exists")
+                
+            elif choice == 2:
+                print("     Edit Subject")
+                code = input("          Enter subject code: ")
+                subject = Subjects.get_subject(code)
+                if subject:
+                    print("          Subject:")
+                    print(pd.DataFrame(subject))
+                    print("          1. Edit Name")
+                    print("          2. Edit Code")
+                    print("          3. Edit Branchs")
+                    print("          4. Edit Semester")
+                    print("          5. Edit Theory Credit")
+                    print("          6. Edit Practical Credit")
+                    print("          7. Edit All")
+                    print("          8. Back to Subject Menu")
+                    edit_choices = list(map(int,input("          Enter Choices in format <<choice1>,<choice2>,...> \n          e.g. For subject name, branchs, practical credits type: 1,3,6\n          Enter your choices: ").split(',')))
+                    for edit_choice in set(edit_choices):
+                        if edit_choice == 1:
+                            name = input("              Enter new name: ")
+                            if Subjects.update_subject(code, name=name):
+                                print("              Name changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 2:
+                            code = input("              Enter new code: ")
+                            if Subjects.update_subject(code, code=code):
+                                print("              Code changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 3:
+                            branchs = input("              (Enter branch names in a comma separated manner with no spaces in between\n\
+                eg. Enter branchs: CE,IT,CSE\
+                Enter branchs: ")
+                            if Subjects.update_subject(code, branchs=branchs):
+                                print("              Branchs changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 4:
+                            semester = int(input("              Enter new semester: "))
+                            if Subjects.update_subject(code, semester=semester):
+                                print("              Semester changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 5:
+                            theory_credit = int(input("              Enter new theory credit: "))
+                            if Subjects.update_subject(code, theory_credit=theory_credit):
+                                print("              Theory Credit changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 6:
+                            practical_credit = int(input("              Enter new practical credit: "))
+                            if Subjects.update_subject(code, practical_credit=practical_credit):
+                                print("              Practical Credit changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 7:
+                            name = input("              Enter new name: ")
+                            code = input("              Enter new code: ")
+                            branchs = input("              (Enter branch names in a comma separated manner with no spaces in between\n\
+                    eg. Enter branchs: CE,IT,CSE\
+                    Enter branchs: ")
+                            semester = int(input("              Enter new semester: "))
+                            theory_credit = int(input("              Enter new theory credit: "))
+                            practical_credit = int(input("              Enter new practical credit: "))
+                            if Subjects.update_subject(code, name=name, code=code, branchs=branchs, semester=semester, theory_credit=theory_credit, practical_credit=practical_credit):
+                                print("              Subject changed successfully")
+                            else:
+                                print("              Subject not found")
+                        elif edit_choice == 8:
+                            print("              Back to Subject Menu")
+                        else:
+                            print("              Invalid Choice")
+                            print("              Back to Subject Menu")
+                else:
+                    print("          Subject not found")
+
+            elif choice == 3:
+                print("     Delete Subject")
+                code = input("          Enter subject code: ")
+                if Subjects.delete_subject(code):
+                    print("          Subject deleted successfully")
+                else:
+                    print("          Subject not found")
+            elif choice == 4:
+                print("     View Subject(s)")
+                print("          1. View all subjects")
+                print("          2. View subject by name")
+                print("          3. View subject by code")
+                print("          4. View subject by branch")
+                print("          5. View subject by semester")
+                print("          6. View subject by theory credit")
+                print("          7. View subject by practical credit")
+                print("          8. View subject by branch and semester")
+                print("          9. Back to Subject Menu")
+                view_choice = int(input("          Enter your choice: "))
+                if view_choice == 1:
+                    subjects = Subjects.get_all_subjects()
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 2:
+                    name = input("              Enter subject name: ")
+                    subjects = Subjects.get_subject_by_name(name)
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 3:
+                    code = input("              Enter subject code: ")
+                    subject = Subjects.get_subject(code)
+                    if subject:
+                        print("              Subject:")
+                        print(pd.DataFrame(subject))
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 4:
+                    branchs = input("              (Enter branch names in a comma separated manner with no spaces in between\n\
+                eg. Enter branchs: CE,IT,CSE\
+                Enter branchs: ")
+                    subjects = Subjects.get_subject_by_branch(branchs)
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 5:
+                    semester = int(input("              Enter semester: "))
+                    subjects = Subjects.get_subject_by_semester(semester)
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 6:
+                    theory_credit = int(input("              Enter theory credit: "))
+                    subjects = Subjects.get_subject_by_theory_credit(theory_credit)
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 7:
+                    practical_credit = int(input("              Enter practical credit: "))
+                    subjects = Subjects.get_subject_by_practical_credit(practical_credit)
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 8:
+                    branchs = input("              (Enter branch names in a comma separated manner with no spaces in between\n\
+                eg. Enter branchs: CE,IT,CSE\
+                Enter branchs: ")
+                    semester = int(input("              Enter semester: "))
+                    subjects = Subjects.get_subject_by_branch_and_semester(branchs, semester)
+                    if subjects:
+                        print("              Subjects:")
+                        print_df_from_dict(subjects)
+                    else:
+                        print("              No subjects found")
+                elif view_choice == 9:
+                    print("              Back to Subject Menu")
+                else:
+                    print("              Invalid Choice")
+                    print("              Back to Subject Menu")
+            elif choice == 5:
+                print("     Back to Main Menu")
+            else:
+                print("     Invalid Choice")
+                print("     Back to Subject Menu")
             
 if __name__ == '__main__':
     exit_choice = False
@@ -718,5 +923,5 @@ if __name__ == '__main__':
         choice = input("Enter your choice: ")
         if choice == 'N' or choice == 'n':
             exit_choice = True
-
+            print("Thank you for using Student Management System")
 

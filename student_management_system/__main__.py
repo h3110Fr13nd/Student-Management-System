@@ -114,4 +114,3 @@ class StudentDetails(ttk.Treeview):
 if __name__ == '__main__':
     root = StudentManagementSystem()
     root.mainloop()
-
